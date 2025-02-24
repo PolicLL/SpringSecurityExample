@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -21,6 +22,9 @@ public class SecurityConfig {
 
   @Autowired
   private UserDetailsService userDetailsService;
+
+  @Autowired
+  private JwtFilter jwtFilter;
 
   @Bean
   public SecurityFilterChain securityWebFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -30,6 +34,7 @@ public class SecurityConfig {
             .permitAll()
             .anyRequest().authenticated())
         .httpBasic(Customizer.withDefaults()) // include it so that Auth works for Postman
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
   }
 
